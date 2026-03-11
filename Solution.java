@@ -1,28 +1,28 @@
 import java.util.Scanner;
-import java.util.TreeMap;
 import java.util.stream.Stream;
 
 class Solution {
     static int solution(Integer[] A) {
-        // TreeMap: key = current min height of a row, value = count of rows with that min
-        TreeMap<Integer, Integer> rows = new TreeMap<>();
+        int total = 0;
+        for (int x : A) total += x;
 
-        for (int h : A) {
-            // Find the row with the smallest minimum that is still > h (tightest fit)
-            Integer key = rows.higherKey(h);
-            if (key != null) {
-                // Join this row; update its min from key to h
-                int count = rows.get(key);
-                if (count == 1) rows.remove(key);
-                else rows.put(key, count - 1);
-                rows.merge(h, 1, Integer::sum);
-            } else {
-                // No valid row exists, create a new one
-                rows.merge(h, 1, Integer::sum);
+        // dp[s] = true if subset sum s is achievable
+        boolean[] dp = new boolean[total + 1];
+        dp[0] = true;
+
+        for (int x : A) {
+            for (int s = total; s >= x; s--) {
+                if (dp[s - x]) dp[s] = true;
             }
         }
 
-        return rows.values().stream().mapToInt(Integer::intValue).sum();
+        // Find largest achievable sum <= total/2
+        int bestSum = 0;
+        for (int s = total / 2; s >= 0; s--) {
+            if (dp[s]) { bestSum = s; break; }
+        }
+
+        return total - 2 * bestSum;
     }
 
     public static void main(String[] args) {
