@@ -1,20 +1,21 @@
 class Solution {
 
-    public static int solution(String S) {
-        // Tokens move exactly +3 positions, so positions with the same (index % 3)
-        // form independent "lanes" that never interact with each other.
-        int coins = 0;
-        for (int r = 0; r < 3; r++) {
-            // Within a lane, a coin is collectible if and only if at least one token
-            // exists to its left — we can always maneuver tokens past each other since
-            // we control move order, so no token is ever permanently blocked.
-            int tokens = 0; // number of tokens seen so far in this lane
-            for (int i = r; i < S.length(); i += 3) {
-                char c = S.charAt(i);
-                if (c == 'T') tokens++;
-                else if (c == 'C' && tokens > 0) coins++; // reachable by a token to its left
+    public static int solution(int[] A) {
+        int best = 1; // at minimum we can always pick one element
+
+        // Try each digit 0–9 as the "shared digit".
+        // Any group of numbers that all contain digit d is valid,
+        // so count how many numbers in A contain d and take the max.
+        for (int d = 0; d <= 9; d++) {
+            int count = 0;
+            for (int num : A) {
+                int tens = num / 10; // tens digit (1–9 for two-digit numbers)
+                int ones = num % 10; // ones digit (0–9)
+                if (tens == d || ones == d) count++;
             }
+            best = Math.max(best, count);
         }
-        return coins;
+
+        return best;
     }
 }
