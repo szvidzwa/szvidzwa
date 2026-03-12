@@ -1,41 +1,21 @@
 import java.util.Scanner;
-import java.util.stream.Stream;
 
 class Solution {
-    static int solution(Integer[] A) {
-        int total = 0;
-        for (int x : A) total += x;
-
-        // dp[s] = true if subset sum s is achievable
-        boolean[] dp = new boolean[total + 1];
-        dp[0] = true;
-
-        for (int x : A) {
-            for (int s = total; s >= x; s--) {
-                if (dp[s - x]) dp[s] = true;
+    static int solution(String board) {
+        int coins = 0;
+        for (int r = 0; r < 3; r++) {
+            int tokens = 0;
+            for (int i = r; i < board.length(); i += 3) {
+                char c = board.charAt(i);
+                if (c == 'T') tokens++;
+                else if (c == 'C' && tokens > 0) coins++;
             }
         }
-
-        // Find largest achievable sum <= total/2
-        int bestSum = 0;
-        for (int s = total / 2; s >= 0; s--) {
-            if (dp[s]) { bestSum = s; break; }
-        }
-
-        return total - 2 * bestSum;
+        return coins;
     }
 
     public static void main(String[] args) {
-        // Read from stdin, solve the problem, write answer to stdout.
         Scanner in = new Scanner(System.in);
-        Integer[] A = getIntegerArray(in.next());
-
-        System.out.print(solution(A));
-    }
-
-    private static Integer[] getIntegerArray(String str) {
-        return Stream.of(str.split("\\,"))
-                .map(Integer::valueOf)
-                .toArray(Integer[]::new);
+        System.out.print(solution(in.next()));
     }
 }
